@@ -1,14 +1,17 @@
 import datetime
 
-def get_datetime_str():
-    now = datetime.datetime.now()
-    return now.strftime("%Y%m%d%H%M%S")
-
 def create_html_file(file_name, batch_name, contents):
     tbody = ''
     for line in contents:
-        text, url = [item.strip('\n').strip() for item in line.split(':', 1)]
-        tbody += f'<tr><td><a href="{url}">{text}</a></td></tr>'
+        if ':' not in line:  # agar colon hi nahi hai to skip karo
+            print("⚠️ Skipping invalid line:", line)
+            continue
+        try:
+            text, url = [item.strip('\n').strip() for item in line.split(':', 1)]
+            tbody += f'<tr><td><a href="{url}">{text}</a></td></tr>'
+        except Exception as e:
+            print("⚠️ Error in line:", line, e)
+            continue
 
     with open('template.html') as fp:
         file_content = fp.read()
